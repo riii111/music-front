@@ -97,16 +97,16 @@ function RadioComponent() {
           </Text>
         </Box>
         <Stack
+          paddingX="14px"
+          paddingY="3px"
+          direction="row"
+          justify="center"
+          align="center"
+          spacing="48px"
           style={{
             ...playStackStyle,
             width: "186px",
             height: "33px",
-            paddingX: "14px",
-            paddingY: "3px",
-            direction: "row",
-            justify: "center",
-            align: "center",
-            spacing: "48px",
             overflow: "hidden",
           }}
         >

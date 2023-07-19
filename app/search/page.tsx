@@ -146,7 +146,12 @@ const SearchResultComponent: React.FC<SearchResultProps> = ({ musicData }) => {
               height="88px"
               style={{ margin: "30px 0" }}
             >
-              <Image width="100px" height="100px" src={music.images.url} />
+              <Image
+                width="100px"
+                height="100px"
+                src={music.images.url}
+                alt="song image"
+              />
               <ReactAudioPlayer
                 style={{ maxWidth: "105px", height: "8px" }}
                 src={music.song_url}
