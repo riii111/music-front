@@ -18,6 +18,7 @@ import Music from "../utils/interface/music-info";
 import searchMusic from "../api/search-music";
 import FavoriteTrackListFrame from "../components/favorite-track";
 import RadioComponent from "../components/radio";
+import MusicPlayerBarFrame from "../components/music-player-bar";
 // import playMusic from "../api/play-music";
 
 const textStyle: React.CSSProperties = {
@@ -35,11 +36,20 @@ const mainFrameProps = {
   maxWidth: "100%",
 };
 
-function SearchMusicComponent() {
-  // 検索ワードを受け取るuseState.
-  const [query, setQuery] = useState<string>("");
-  // 楽曲データの検索結果を受け取るuseState.
-  const [musicData, setMusicData] = useState<Music[]>([]);
+interface SearchMusicComponentProps {
+  onSelectedMusic: React.Dispatch<React.SetStateAction<boolean>>;
+  onSetMusicInfo: React.Dispatch<React.SetStateAction<Music | undefined>>; // TODO: nullだと親コンポでエラーなので、undefinedとして記載したが良いのか...
+}
+
+function SearchMusicComponent(props: SearchMusicComponentProps) {
+  const [query, setQuery] = useState<string>(""); // 検索ワードを受け取るuseState.
+  const [musicData, setMusicData] = useState<Music[]>([]); // 楽曲データの検索結果を受け取るuseState.
+
+  const handleMusicSelect = (music: Music) => {
+    console.log("called handleMusicSelect()");
+    props.onSetMusicInfo(music);
+    props.onSelectedMusic(true); // 画面下部の再生バーを表示する.
+  };
 
   const handleSearch = async () => {
     try {
@@ -52,15 +62,20 @@ function SearchMusicComponent() {
   };
 
   return (
-    <Stack>
-      <IconComponent />
-      <SearchBarComponent
-        onSearch={handleSearch}
-        query={query}
-        setQuery={setQuery}
-      />
-      <SearchResultComponent musicData={musicData} />
-    </Stack>
+    <>
+      <Stack>
+        <IconComponent />
+        <SearchBarComponent
+          onSearch={handleSearch}
+          query={query}
+          setQuery={setQuery}
+        />
+        <SearchResultComponent
+          musicData={musicData}
+          onSelect={handleMusicSelect}
+        />
+      </Stack>
+    </>
   );
 }
 
@@ -110,12 +125,17 @@ const SearchBarComponent: React.FC<SearchBarProps> = ({
 
 interface SearchResultProps {
   musicData: Music[];
+  onSelect: (music: Music) => void;
 }
 
-const SearchResultComponent: React.FC<SearchResultProps> = ({ musicData }) => {
-  // const handlePlayMusic = (songId: any) => {
-  //   playMusic(songId);
-  // };
+const SearchResultComponent: React.FC<SearchResultProps> = ({
+  musicData,
+  onSelect,
+}) => {
+  const handlePlay = (music: Music) => {
+    console.log("called handlePlay()");
+    onSelect(music);
+  };
 
   return (
     <>
@@ -155,7 +175,7 @@ const SearchResultComponent: React.FC<SearchResultProps> = ({ musicData }) => {
               <ReactAudioPlayer
                 style={{ maxWidth: "105px", height: "8px" }}
                 src={music.song_url}
-                // onPlay={() => handlePlayMusic(music.id)}
+                onPlay={() => handlePlay(music)}
                 controls
               />
               <Text fontSize="10px" color="#000000" style={textStyle}>
@@ -200,6 +220,9 @@ function IconComponent() {
 }
 // 画面左側の最も大きい枠. メインフレーム.
 function SearchAndResultFrame() {
+  const [selectedMusic, setSelectedMusic] = useState<Music>(); // 検索結果で、選択された楽曲の情報を受け取るuseState.
+  const [isPlaying, setIsPlaying] = useState(false); // 楽曲を再生中か. 再生ボタンを一度押すと、再生バーが表示される.
+
   return (
     <Box>
       <Stack
@@ -220,35 +243,23 @@ function SearchAndResultFrame() {
           }}
         >
           <RadioComponent />
-          <SearchMusicComponent />
+          <SearchMusicComponent
+            onSelectedMusic={setIsPlaying}
+            onSetMusicInfo={setSelectedMusic}
+          />
         </Stack>
       </Stack>
+      {isPlaying && <MusicPlayerBarFrame selectedMusic={selectedMusic} />}
     </Box>
   );
 }
-
-// 画面下側の枠.
-function ReplayFrame() {
-  return (
-    <>
-      <Box
-        width="1152px"
-        height="59px"
-        top="637px"
-        left="0px"
-        background="#242424"
-        position="absolute"
-      />
-    </>
-  );
-}
+// TODO: setSelectedMusicはミス、selectedMusicを渡す事。
 
 export const SearchPage = () => (
   <>
     <Box>
       <SearchAndResultFrame />
       <FavoriteTrackListFrame />
-      <ReplayFrame />
     </Box>
   </>
 );
