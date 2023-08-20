@@ -10,8 +10,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
-import { useState } from "react";
-import ReactAudioPlayer from "react-audio-player";
+import { useState, useRef } from "react";
 
 import Music from "../utils/interface/music-info";
 
@@ -19,7 +18,7 @@ import searchMusic from "../api/search-music";
 import FavoriteTrackListFrame from "../components/favorite-track";
 import RadioComponent from "../components/radio";
 import MusicPlayerBarFrame from "../components/music-player-bar";
-// import playMusic from "../api/play-music";
+import { FiPlayCircle } from "react-icons/fi";
 
 const textStyle: React.CSSProperties = {
   fontFamily: "Raleway",
@@ -46,7 +45,6 @@ function SearchMusicComponent(props: SearchMusicComponentProps) {
   const [musicData, setMusicData] = useState<Music[]>([]); // 楽曲データの検索結果を受け取るuseState.
 
   const handleMusicSelect = (music: Music) => {
-    console.log("called handleMusicSelect()");
     props.onSetMusicInfo(music);
     props.onSelectedMusic(true); // 画面下部の再生バーを表示する.
   };
@@ -93,6 +91,13 @@ const SearchBarComponent: React.FC<SearchBarProps> = ({
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
   };
+  // const inputRef = useRef<HTMLInputElement>(null);
+  // const handleInputFocus = () => {
+  //   console.log("called handleInputFocus");
+  //   console.log(inputRef.current);
+  //   (document.activeElement as HTMLElement)?.blur();
+  //   inputRef.current && inputRef.current.focus();
+  // };
 
   return (
     <>
@@ -108,6 +113,8 @@ const SearchBarComponent: React.FC<SearchBarProps> = ({
         placeholder=" Search..."
         value={query}
         onChange={handleInputChange}
+        // ref={inputRef}
+        // onFocus={handleInputFocus}
       />
       <IconButton
         aria-label="Search"
@@ -128,43 +135,60 @@ interface SearchResultProps {
   onSelect: (music: Music) => void;
 }
 
-const SearchResultComponent: React.FC<SearchResultProps> = ({
-  musicData,
-  onSelect,
-}) => {
+const SearchResultComponent = ({ musicData, onSelect }: SearchResultProps) => {
+  const [selectedMusicId, setSelectedMusicId] = useState(null);
+
   const handlePlay = (music: Music) => {
-    console.log("called handlePlay()");
     onSelect(music);
+  };
+  const handleImageHover = (id) => {
+    // アニメーション処理を追加する
+    setSelectedMusicId(id);
+  };
+
+  const handleImageLeave = () => {
+    // アニメーション解除処理を追加する
+    setSelectedMusicId(null);
   };
 
   return (
-    <>
-      <Stack>
-        <Text
-          fontFamily="Raleway"
-          fontWeight="bold"
-          fontSize="17px"
-          color="#000000"
-          width="197px"
-          height="24px"
-          left="20px"
-          top="330px"
-          position="absolute"
-        >
-          Search Result
-        </Text>
-        <HStack
-          left="18px"
-          top="364px"
-          position="absolute"
-          style={{ flexWrap: "wrap" }}
-        >
-          {musicData.map((music) => (
+    <Stack>
+      <Text
+        fontFamily="Raleway"
+        fontWeight="bold"
+        fontSize="17px"
+        color="#000000"
+        width="197px"
+        height="24px"
+        left="20px"
+        top="330px"
+        position="absolute"
+      >
+        Search Result
+      </Text>
+      <HStack
+        left="18px"
+        top="364px"
+        position="absolute"
+        style={{ flexWrap: "wrap" }}
+        spacing="30px"
+      >
+        {musicData.map((music) => (
+          <Box key={music.id} width="125px" height="165px">
             <Box
-              key={music.id}
-              width="125px"
-              height="88px"
-              style={{ margin: "30px 0" }}
+              position="relative"
+              width="100px"
+              height="100px"
+              mb="2"
+              transition="transform 0.3s, opacity 0.3s" // カーソルホバー時のアニメーション追加
+              transform={
+                selectedMusicId === music.id ? "scale(1.05)" : "scale(1)"
+              } // カーソルがあたっている場合に拡大するアニメーション
+              opacity={selectedMusicId === music.id ? 0.8 : 1} // カーソルがあたっている場合にアルファ値を変更
+              cursor="pointer"
+              onMouseEnter={() => handleImageHover(music.id)} // マウスカーソルが要素に入った際の処理
+              onMouseLeave={handleImageLeave} // マウスカーソルが要素から出た際の処理
+              onClick={() => handlePlay(music)}
             >
               <Image
                 width="100px"
@@ -172,27 +196,29 @@ const SearchResultComponent: React.FC<SearchResultProps> = ({
                 src={music.images.url}
                 alt="song image"
               />
-              <ReactAudioPlayer
-                style={{ maxWidth: "105px", height: "8px" }}
-                src={music.song_url}
-                onPlay={() => handlePlay(music)}
-                controls
-              />
-              <Text fontSize="10px" color="#000000" style={textStyle}>
-                {music.song_title}
-              </Text>
-              <Text
-                fontSize="8px"
-                color="rgba(0, 0, 0, 0.32)"
-                style={textStyle}
+              <Box
+                rounded="base"
+                p={1}
+                position="absolute"
+                right={0}
+                bottom={0}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
               >
-                {music.artist_name}
-              </Text>
+                <FiPlayCircle color="rgba(235, 213, 100, 0.94)" size="40px" />
+              </Box>
             </Box>
-          ))}
-        </HStack>
-      </Stack>
-    </>
+            <Text fontSize="10px" color="#000000">
+              {music.song_title}
+            </Text>
+            <Text fontSize="8px" color="rgba(0, 0, 0, 0.32)">
+              {music.artist_name}
+            </Text>
+          </Box>
+        ))}
+      </HStack>
+    </Stack>
   );
 };
 
@@ -221,7 +247,7 @@ function IconComponent() {
 // 画面左側の最も大きい枠. メインフレーム.
 function SearchAndResultFrame() {
   const [selectedMusic, setSelectedMusic] = useState<Music>(); // 検索結果で、選択された楽曲の情報を受け取るuseState.
-  const [isPlaying, setIsPlaying] = useState(false); // 楽曲を再生中か. 再生ボタンを一度押すと、再生バーが表示される.
+  const [isVisiblePlaybackBar, setVisiblePlaybackBar] = useState(false); // 楽曲を再生中か. 再生ボタンを一度押すと、再生バーが表示される.
 
   return (
     <Box>
@@ -244,16 +270,17 @@ function SearchAndResultFrame() {
         >
           <RadioComponent />
           <SearchMusicComponent
-            onSelectedMusic={setIsPlaying}
+            onSelectedMusic={setVisiblePlaybackBar}
             onSetMusicInfo={setSelectedMusic}
           />
         </Stack>
       </Stack>
-      {isPlaying && <MusicPlayerBarFrame selectedMusic={selectedMusic} />}
+      {isVisiblePlaybackBar && (
+        <MusicPlayerBarFrame selectedMusic={selectedMusic} isPlaying={false} />
+      )}
     </Box>
   );
 }
-// TODO: setSelectedMusicはミス、selectedMusicを渡す事。
 
 export const SearchPage = () => (
   <>

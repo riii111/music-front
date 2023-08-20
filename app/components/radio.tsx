@@ -110,7 +110,7 @@ function RadioComponent() {
             overflow: "hidden",
           }}
         >
-          <Text>PLAY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▶</Text>
+          <Text>Let's search!▶</Text>
         </Stack>
         <Image
           style={{
