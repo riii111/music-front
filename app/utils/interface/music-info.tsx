@@ -4,7 +4,7 @@ interface Images {
   width: number;
 }
 
-interface Music {
+export interface Music {
   id: number | string;
   song_title: string;
   artist_name: string;
@@ -13,4 +13,4 @@ interface Music {
   images: Images;
 }
 
-export default Music;
+// export default Music;

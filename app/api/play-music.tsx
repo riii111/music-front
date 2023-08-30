@@ -1,7 +1,7 @@
 // -----------本ファイルは現在未使用です-----------
 import axios from "axios";
 
-async function playMusic(currentSongId: string): Promise<any> {
+export async function playMusic(currentSongId: string): Promise<any> {
   try {
     const playMusicUri = `http://localhost:8000/songs/${currentSongId}`;
     await axios.post<any>(playMusicUri);
@@ -14,4 +14,4 @@ async function playMusic(currentSongId: string): Promise<any> {
   }
 }
 
-export default playMusic;
+// export default playMusic;

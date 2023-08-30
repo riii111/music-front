@@ -1,4 +1,4 @@
-interface TrackProps {
+export interface TrackProps {
   imageSrc: string;
   altText: string;
   trackTitle: string;
@@ -6,4 +6,4 @@ interface TrackProps {
   positionTop: number;
 }
 
-export default TrackProps;
+// export default TrackProps;

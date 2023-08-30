@@ -10,15 +10,17 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
-import { useState, useRef } from "react";
+import { useState } from "react";
 
-import Music from "../utils/interface/music-info";
+import { Music } from "../utils/interface/music-info";
 
-import searchMusic from "../api/search-music";
-import FavoriteTrackListFrame from "../components/favorite-track";
-import RadioComponent from "../components/radio";
-import MusicPlayerBarFrame from "../components/music-player-bar";
+import { searchMusic } from "../api/search-music";
+import { FavoriteTrackListFrame } from "../components/favorite-track";
+import { RadioComponent } from "../components/radio";
+import { MusicPlayerBarFrame } from "../components/music-player-bar";
 import { FiPlayCircle } from "react-icons/fi";
+import { TrackProps } from "../utils/interface/track-info";
+import { motion } from "framer-motion";
 
 const textStyle: React.CSSProperties = {
   fontFamily: "Raleway",
@@ -91,13 +93,6 @@ const SearchBarComponent: React.FC<SearchBarProps> = ({
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
   };
-  // const inputRef = useRef<HTMLInputElement>(null);
-  // const handleInputFocus = () => {
-  //   console.log("called handleInputFocus");
-  //   console.log(inputRef.current);
-  //   (document.activeElement as HTMLElement)?.blur();
-  //   inputRef.current && inputRef.current.focus();
-  // };
 
   return (
     <>
@@ -113,8 +108,6 @@ const SearchBarComponent: React.FC<SearchBarProps> = ({
         placeholder=" Search..."
         value={query}
         onChange={handleInputChange}
-        // ref={inputRef}
-        // onFocus={handleInputFocus}
       />
       <IconButton
         aria-label="Search"
@@ -140,15 +133,6 @@ const SearchResultComponent = ({ musicData, onSelect }: SearchResultProps) => {
 
   const handlePlay = (music: Music) => {
     onSelect(music);
-  };
-  const handleImageHover = (id) => {
-    // アニメーション処理を追加する
-    setSelectedMusicId(id);
-  };
-
-  const handleImageLeave = () => {
-    // アニメーション解除処理を追加する
-    setSelectedMusicId(null);
   };
 
   return (
@@ -176,18 +160,15 @@ const SearchResultComponent = ({ musicData, onSelect }: SearchResultProps) => {
         {musicData.map((music) => (
           <Box key={music.id} width="125px" height="165px">
             <Box
+              as={motion.div}
               position="relative"
               width="100px"
               height="100px"
               mb="2"
-              transition="transform 0.3s, opacity 0.3s" // カーソルホバー時のアニメーション追加
-              transform={
-                selectedMusicId === music.id ? "scale(1.05)" : "scale(1)"
-              } // カーソルがあたっている場合に拡大するアニメーション
               opacity={selectedMusicId === music.id ? 0.8 : 1} // カーソルがあたっている場合にアルファ値を変更
               cursor="pointer"
-              onMouseEnter={() => handleImageHover(music.id)} // マウスカーソルが要素に入った際の処理
-              onMouseLeave={handleImageLeave} // マウスカーソルが要素から出た際の処理
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => handlePlay(music)}
             >
               <Image
@@ -245,48 +226,61 @@ function IconComponent() {
   );
 }
 // 画面左側の最も大きい枠. メインフレーム.
-function SearchAndResultFrame() {
+export function SearchPage() {
   const [selectedMusic, setSelectedMusic] = useState<Music>(); // 検索結果で、選択された楽曲の情報を受け取るuseState.
   const [isVisiblePlaybackBar, setVisiblePlaybackBar] = useState(false); // 楽曲を再生中か. 再生ボタンを一度押すと、再生バーが表示される.
+  const [trackList, setTrackList] = useState<TrackProps[]>([]);
+  const topValue = 73;
+
+  const handleFavoriteClick = () => {
+    setTrackList((prevTrackList) => [
+      ...prevTrackList,
+      {
+        imageSrc: selectedMusic?.images.url,
+        altText: selectedMusic?.song_title,
+        trackTitle: selectedMusic?.song_title,
+        artistName: selectedMusic?.artist_name,
+        positionTop: topValue + prevTrackList.length * 80,
+      },
+    ]);
+  };
 
   return (
-    <Box>
-      <Stack
-        direction="row"
-        justify="flex-start"
-        align="flex-start"
-        spacing="-8px"
-        width="1152px"
-        maxWidth="100%"
-      >
+    <Box h="100vh">
+      <Box>
         <Stack
-          {...mainFrameProps}
-          background="rgba(222, 207, 131, 0.27)"
-          position="relative"
-          overflowY="scroll"
-          css={{
-            scrollBehavior: "smooth",
-          }}
+          direction="row"
+          justify="flex-start"
+          align="flex-start"
+          spacing="-8px"
+          width="1152px"
+          maxWidth="100%"
         >
-          <RadioComponent />
-          <SearchMusicComponent
-            onSelectedMusic={setVisiblePlaybackBar}
-            onSetMusicInfo={setSelectedMusic}
-          />
+          <Stack
+            {...mainFrameProps}
+            background="rgba(222, 207, 131, 0.27)"
+            position="relative"
+            overflowY="auto"
+          >
+            <RadioComponent />
+            <SearchMusicComponent
+              onSelectedMusic={setVisiblePlaybackBar}
+              onSetMusicInfo={setSelectedMusic}
+            />
+          </Stack>
         </Stack>
-      </Stack>
-      {isVisiblePlaybackBar && (
-        <MusicPlayerBarFrame selectedMusic={selectedMusic} isPlaying={false} />
-      )}
+        {isVisiblePlaybackBar && (
+          <MusicPlayerBarFrame
+            selectedMusic={selectedMusic}
+            isPlaying={false}
+            handleFavoriteClick={handleFavoriteClick}
+          />
+        )}
+      </Box>
+      <FavoriteTrackListFrame
+        trackList={trackList}
+        setTrackList={setTrackList}
+      />
     </Box>
   );
 }
-
-export const SearchPage = () => (
-  <>
-    <Box>
-      <SearchAndResultFrame />
-      <FavoriteTrackListFrame />
-    </Box>
-  </>
-);

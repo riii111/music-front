@@ -1,5 +1,5 @@
 import { Stack, Box, Text, Image } from "@chakra-ui/react";
-function RadioComponent() {
+export function RadioComponent() {
   const boxStyle: React.CSSProperties = {
     background: "rgba(235, 213, 100, 0.94)",
     position: "absolute",

@@ -1,7 +1,7 @@
 import axios from "axios";
 import Music from "../utils/interface/music-info";
 
-async function searchMusic(query: string): Promise<Music[]> {
+export async function searchMusic(query: string): Promise<Music[]> {
   try {
     const searchQueryUri = `http://localhost:8000/songs?search_words=${query}`;
     const response = await axios.get<Music[]>(searchQueryUri);
@@ -19,4 +19,4 @@ async function searchMusic(query: string): Promise<Music[]> {
   }
 }
 
-export default searchMusic;
+// export default searchMusic;

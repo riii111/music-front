@@ -1,5 +1,7 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
+import { MdFavorite } from "react-icons/md";
+import { motion } from "framer-motion";
 
 import {
   Box,
@@ -10,19 +12,19 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  Circle,
 } from "@chakra-ui/react";
-import Music from "../utils/interface/music-info";
-import StopAndPlayButton from "./stop-and-play-button";
+import { Music } from "../utils/interface/music-info";
+import { StopAndPlayButton } from "./stop-and-play-button";
 
 interface VolumeSliderComponentProps {
   handleClick: (volume: number) => void;
-  audio: Audio;
-  volume: number;
+  audio: typeof Audio;
 }
 
 const MAX_VOLUME = 100; // 楽曲のボリュームの最大値.
 const INIT_VOLUME = 50; // 楽曲のボリュームの初期値.
-const MAX_TIME = 29; // 楽曲の再生時間の最大値.
+const MAX_TIME = 29.0; // 楽曲の再生時間の最大値.
 
 function VolumeSliderComponent(props: VolumeSliderComponentProps) {
   const [sliderValue, setSliderValue] = useState(props.audio.volume * 100); // スライダーの現在の値.
@@ -66,11 +68,15 @@ function VolumeSliderComponent(props: VolumeSliderComponentProps) {
             <SliderFilledTrack bgColor="#EBD564" />
           </SliderTrack>
           <SliderThumb
+            as={motion.div}
             boxSize={7}
             borderRadius="full"
             bgColor="#EBD564"
             top="-1px" // バーの上端に合わせるために微調整
             position="absolute"
+            whileHover={{ scale: 1.2 }}
+            whileDrag={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             left={`${(sliderValue / MAX_VOLUME) * 170}px`} // ボリュームに応じて位置を動的に設定
           />
         </Slider>
@@ -133,12 +139,15 @@ function SelectedSongSliderComponent(props: SelectedSongSliderComponentProps) {
             <SliderFilledTrack />
           </SliderTrack>
           <SliderThumb
+            as={motion.div}
             boxSize={10}
             borderRadius="full"
             bg="#3182CE"
             top="-1px" // バーの上端に合わせるために微調整
             position="absolute"
-            // ref={props.sliderRef}
+            whileHover={{ scale: 1.2 }}
+            whileDrag={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             left={`${(props.currentTime / MAX_TIME) * 376}px`} // 再生時間に応じて位置を動的に設定
           />
         </Slider>
@@ -162,10 +171,11 @@ function SelectedSongSliderComponent(props: SelectedSongSliderComponentProps) {
 interface MusicPlayerBarFrameProps {
   selectedMusic: Music;
   isPlaying: boolean;
+  handleFavoriteClick: () => void;
 }
 
-function MusicPlayerBarFrame(props: MusicPlayerBarFrameProps) {
-  const [audio, setAudio] = useState<Audio | null>(null);
+export function MusicPlayerBarFrame(props: MusicPlayerBarFrameProps) {
+  const [audio, setAudio] = useState<typeof Audio | null>(null);
 
   const [selectedMusic, setSelectedMusic] = useState(props.selectedMusic);
   const [isPlaying, setIsPlaying] = useState(props.isPlaying);
@@ -304,8 +314,21 @@ function MusicPlayerBarFrame(props: MusicPlayerBarFrameProps) {
           audio={audio}
         />
       )}
+      <Circle
+        as={motion.div}
+        size="31px"
+        background="#3F3F3F"
+        top="16px"
+        left="1087px"
+        position="absolute"
+        onClick={props.handleFavoriteClick}
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        <MdFavorite color="#DECF83" size="23.67px" />
+      </Circle>
     </HStack>
   );
 }
 
-export default MusicPlayerBarFrame;
+// export default MusicPlayerBarFrame;
