@@ -1,8 +1,23 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+## 使用技術
+- Next.js
+- TypeScript
+- React Hooks
+- ChakraUI
+- Framer Motion
 
-First, run the development server:
+## 環境構築〜起動まで
+### 1. インストール
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+### 2. 起動準備
 
 ```bash
 npm run dev
@@ -12,23 +27,54 @@ yarn dev
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) で結果を確認。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## ディレクトリ構成（一部紹介）
+```
+- app
+  - api/
+    - favorite-music.tsx
+    （楽曲をお気に入りリストに追加・削除するAPI。）
+    - play-music.tsx
+    （※未使用）
+    - search-music.tsx
+    （楽曲検索API。Spotify APIのラッパー。）
+  - components/
+    - FavoriteMusicList/
+      - FavoriteTrack.tsx
+      （お気に入り楽曲を表示するコンポーネント）
+      - FavoriteTrackList.tsx
+      （お気に入り楽曲リストを表示するページコンポーネント）
+    - MusicPlayerBar/
+      - MusicCard.tsx
+      （楽曲情報を表示するコンポーネント）
+      - MusicPlayerBar.tsx
+      （再生中の楽曲の情報を確認・操作できるページコンポーネント）
+      - SongProgressBar.tsx
+      （再生中の楽曲の進捗を操作できるコンポーネント）
+      - StopAndPlayButton.tsx
+      （楽曲の再生/停止を操作できるコンポーネント）
+      - VolumeSlider.tsx
+      （楽曲の音量を調整できるコンポーネント）
+    - SearchMusic/
+      - Radio.tsx
+      （ラジオ情報を表示するコンポーネント）
+      - SearchBar.tsx
+      （検索入力バーを表示するコンポーネント）
+      - SearchMusic.tsx
+      （楽曲を検索〜検索結果を確認できるページコンポーネント）
+      - SearchMusicResult.tsx
+      （検索結果を表示するコンポーネント）
+      - WebIcon.tsx
+      （アプリのアイコンを表示するコンポーネント）
+    - layout.tsx
+      （このアプリの画面のレイアウト）
+  - utils/
+    - interface/
+      - music-info.tsx
+      （バックエンド側から受け取る楽曲情報を定義）
+      - track-info.tsx
+      （楽曲情報を表示する際に使う型を定義）
+    - constants.tsx 
+      （複数のファイルで使用する定数を定義）
+```
