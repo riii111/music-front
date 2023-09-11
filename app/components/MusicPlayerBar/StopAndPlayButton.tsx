@@ -32,5 +32,3 @@ export function StopAndPlayButton(props: StopAndPlayButtonProps) {
     </Box>
   );
 }
-
-// export default StopAndPlayButton;

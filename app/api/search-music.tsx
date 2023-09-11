@@ -1,10 +1,10 @@
 import axios from "axios";
-import Music from "../utils/interface/music-info";
+import { Song } from "../utils/interface/music-info";
 
-export async function searchMusic(query: string): Promise<Music[]> {
+export async function searchMusic(query: string): Promise<Song[]> {
   try {
     const searchQueryUri = `http://localhost:8000/songs?search_words=${query}`;
-    const response = await axios.get<Music[]>(searchQueryUri);
+    const response = await axios.get<Song[]>(searchQueryUri);
 
     return response.data;
   } catch (error) {
@@ -18,5 +18,3 @@ export async function searchMusic(query: string): Promise<Music[]> {
     throw error;
   }
 }
-
-// export default searchMusic;

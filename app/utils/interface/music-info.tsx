@@ -1,16 +1,14 @@
-interface Images {
+interface Image {
   url: string;
   height: number;
   width: number;
 }
 
-export interface Music {
+export interface Song {
   id: number | string;
   song_title: string;
   artist_name: string;
   song_url: string;
   album_name: string;
-  images: Images;
+  image: Image;
 }
-
-// export default Music;
