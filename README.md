@@ -1,3 +1,5 @@
+zennに本サービスの詳細をまとめています。
+https://zenn.dev/ichimia111/articles/09fa295ee2cc1e
 
 ## 使用技術
 - Next.js
