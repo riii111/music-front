@@ -1,4 +1,4 @@
-export interface TrackProps {
+export interface Track {
   id: string;
   imageSrc: string;
   altText: string;

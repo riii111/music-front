@@ -25,9 +25,10 @@ export async function addFavoriteMusic(song: Song) {
   }
 }
 
-export async function getFavoriteMusic(): Promise<Song[]> {
+export async function getFavoriteMusicList(): Promise<Song[]> {
   try {
-    const getFavoriteMusicUri = `http://localhost:8000/favorites`;
+    // SSR経由で呼び出そうとすると失敗するため、localhost → 127.0.0.1に記述変更.
+    const getFavoriteMusicUri = `http://127.0.0.1:8000/favorites`;
 
     const response = await axios.get<Song[]>(getFavoriteMusicUri);
 

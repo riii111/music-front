@@ -1,12 +1,12 @@
 import { Stack, Box, Text } from "@chakra-ui/react";
-import { TrackProps } from "../../utils/interface/track-info";
+import { Track } from "../../utils/interface/track-info";
 import { useMemo } from "react";
 import { deleteFavoriteMusic } from "../../api/favorite-music";
 import { topValue } from "../../utils/constants";
 import { FavoriteTrack } from "./FavoriteTrack";
 
 interface FavoriteTrackListProps {
-  trackList: TrackProps[];
+  trackList: Track[];
   setTrackList?: any;
 }
 
@@ -23,7 +23,7 @@ const FavoriteTrackList: React.FC<FavoriteTrackListProps> = ({
 
   const renderedTracks = useMemo(() => {
     if (trackList.length > 0) {
-      return trackList.map((track: TrackProps, index: number) => {
+      return trackList.map((track: Track, index: number) => {
         return (
           <FavoriteTrack
             key={index}
@@ -53,13 +53,8 @@ const FavoriteTrackList: React.FC<FavoriteTrackListProps> = ({
   );
 };
 
-interface FavoriteTrackListFrameProps {
-  trackList: TrackProps[];
-  setTrackList: any;
-}
-
 // 画面右側に表示する枠.
-export function FavoriteTrackListFrame(props: FavoriteTrackListFrameProps) {
+export function FavoriteTrackListFrame({ trackList, setTrackList }) {
   return (
     <Box>
       <Stack
@@ -96,8 +91,8 @@ export function FavoriteTrackListFrame(props: FavoriteTrackListFrameProps) {
             My favorite tracks
           </Text>
           <FavoriteTrackList
-            trackList={props.trackList}
-            setTrackList={props.setTrackList}
+            trackList={trackList}
+            setTrackList={setTrackList}
           />
         </Box>
       </Stack>

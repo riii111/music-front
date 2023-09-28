@@ -2,8 +2,9 @@ import { Stack, Box, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { MdFavorite } from "react-icons/md";
 import { Image } from "@chakra-ui/react";
+import styles from "../../layout.module.css";
 
-interface FavoriteTrackProps {
+interface FavoriteTrack {
   imageSrc: string;
   altText: string;
   trackTitle: string;
@@ -12,7 +13,7 @@ interface FavoriteTrackProps {
   onDeleteFavorite: () => void;
 }
 
-export const FavoriteTrack: React.FC<FavoriteTrackProps> = ({
+export const FavoriteTrack: React.FC<FavoriteTrack> = ({
   imageSrc,
   altText,
   trackTitle,
@@ -38,6 +39,8 @@ export const FavoriteTrack: React.FC<FavoriteTrackProps> = ({
       width="268px"
       left="34px"
       position="absolute"
+      // layout.module.cssのdescriptionクラスを適用する.
+      // className={styles.description}
     >
       <Image
         src={imageSrc}
@@ -56,6 +59,8 @@ export const FavoriteTrack: React.FC<FavoriteTrackProps> = ({
           width="170px"
           height="16px"
           left={leftValue}
+          // layout.module.cssのdescriptionクラスを適用する.
+          // className={styles.description}
           top={`${topOffset}px`}
           position="absolute"
         >
@@ -68,6 +73,8 @@ export const FavoriteTrack: React.FC<FavoriteTrackProps> = ({
           width="170px"
           height="16px"
           left={leftValue}
+          // layout.module.cssのdescriptionクラスを適用する.
+          // className={styles.description}
           top={`${textOffset}px`}
           position="absolute"
         >

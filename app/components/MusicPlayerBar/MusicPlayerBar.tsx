@@ -1,3 +1,4 @@
+// "use client";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { MdFavorite } from "react-icons/md";
